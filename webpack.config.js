@@ -1,6 +1,11 @@
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 const getFilesFromDir = require('./config/files');
 
 const PAGE_DIR = path.join('src', 'pages', path.sep);
@@ -24,16 +29,13 @@ const entry = getFilesFromDir(PAGE_DIR, ['.js']).reduce((obj, filePath) => {
 }, {});
 
 module.exports = (env, argv) => ({
+  // stats: 'verbose',
   entry: entry,
   output: {
     path: path.join(__dirname, 'build'),
     filename: '[name].[hash:4].js'
   },
   devtool: argv.mode === 'production' ? false : 'eval-source-maps',
-  plugins: [
-    ...htmlPlugins,
-    new ExtractTextPlugin('styles.css'),
-  ],
   resolve: {
     alias: {
       src: path.resolve(__dirname, 'src'),
@@ -122,6 +124,50 @@ module.exports = (env, argv) => ({
         ],
       }],
   },
+  plugins: [
+    new CleanWebpackPlugin(),
+    ...htmlPlugins,
+    new ExtractTextPlugin('styles.css'),
+    new CopyWebpackPlugin([{
+      from: 'src/assets/images/**',
+      to: path.resolve(__dirname, 'build/assets/images'),
+      // to: 'assets/images',
+      toType: 'dir',
+      force: true,
+      flatten: true,
+    }]),
+    // new ImageminPlugin({
+    //   // cacheFolder: path.resolve(__dirname, 'cache'),
+    //   bail: false, // Ignore errors on corrupted images
+    //   cache: false,
+    //   // filter: (source, sourcePath) => {
+    //   //   console.log(source, sourcePath);
+    //   // },
+    //   // test: path.resolve(__dirname, 'build/assets/images/**'),
+    //   test: /\.(jpe?g|png|gif|svg)$/i,
+    //   include: 'build/assets/images/**',
+    //   disable: process.env.NODE_ENV !== 'production', // Disable during development
+    //   // pngquant: ({
+    //   //   quality: [0.5, 0.5],
+    //   // }),
+    //   plugins: [
+    //     ['gifsicle', { interlaced: true }],
+    //     ['mozjpeg', { quality: 80 }],
+    //     // ['jpegtran', { progressive: true }],
+    //     ['optipng', { optimizationLevel: 5 }],
+    //     [
+    //       'svgo',
+    //       {
+    //         plugins: [
+    //           {
+    //             removeViewBox: false
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   ],
+    // }),
+  ],
   optimization: {
     minimize: argv.mode === 'production' ? true : false,
     splitChunks: {
