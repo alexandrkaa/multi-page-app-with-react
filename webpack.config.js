@@ -16,9 +16,10 @@ const htmlPlugins = getFilesFromDir(PAGE_DIR, ['.html']).map((filePath) => {
 
 // { contact: './src/pages/contact.js' }
 const entry = getFilesFromDir(PAGE_DIR, ['.js']).reduce((obj, filePath) => {
+  const returnObj = obj;
   const entryChunkName = filePath.replace(path.extname(filePath), '').replace(PAGE_DIR, '');
-  obj[entryChunkName] = `./${filePath}`;
-  return obj;
+  returnObj[entryChunkName] = `./${filePath}`;
+  return returnObj;
 }, {});
 
 module.exports = (env, argv) => ({
@@ -35,7 +36,7 @@ module.exports = (env, argv) => ({
     alias: {
       src: path.resolve(__dirname, 'src'),
       components: path.resolve(__dirname, 'src', 'components')
-    }
+    },
   },
   module: {
     rules: [
@@ -47,9 +48,9 @@ module.exports = (env, argv) => ({
           options: {
             presets: [
               '@babel/preset-env',
-              '@babel/preset-react'
+              '@babel/preset-react',
             ],
-          }
+          },
         },
       },
       {
@@ -70,10 +71,10 @@ module.exports = (env, argv) => ({
                   return `/${relativePath}`;
                 }
                 return `/assets/images/${path.basename(resourcePath)}`;
-              }
-            }
-          }
-        ]
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -87,11 +88,11 @@ module.exports = (env, argv) => ({
                   return `/${relativePath}`;
                 }
                 return `/assets/fonts/${path.basename(resourcePath)}`;
-              }
-            }
-          }
-        ]
-      }]
+              },
+            },
+          },
+        ],
+      }],
   },
   optimization: {
     minimize: argv.mode === 'production' ? true : false,
@@ -101,7 +102,7 @@ module.exports = (env, argv) => ({
           test: /node_modules/,
           chunks: 'initial',
           name: 'vendor',
-          enforce: true
+          enforce: true,
         },
       },
     },

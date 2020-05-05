@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext .jsx,.js src",
     "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development --hot --open --port 3100"
+    "start": "webpack-dev-server --mode development --hot --open --port 3000"
   },
   "repository": {
     "type": "git",
