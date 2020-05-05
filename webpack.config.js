@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const getFilesFromDir = require('./config/files');
 
 const PAGE_DIR = path.join('src', 'pages', path.sep);
@@ -31,6 +32,7 @@ module.exports = (env, argv) => ({
   devtool: argv.mode === 'production' ? false : 'eval-source-maps',
   plugins: [
     ...htmlPlugins,
+    new ExtractTextPlugin('styles.css'),
   ],
   resolve: {
     alias: {
@@ -57,6 +59,32 @@ module.exports = (env, argv) => ({
         test: /\.css$/,
         use: ['style-loader', { loader: 'css-loader', options: { modules: true } }],
         exclude: /node_modules/,
+      },
+      {
+        test: /\.(sass|scss)$/,
+        // include: path.resolve(__dirname, 'src'),
+        exclude: /node_modules/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            'sass-loader',
+            // {
+            //   loader: 'sass-loader',
+            //   options: {
+            //     sourceMap: true,
+            //   },
+            // },
+            // {
+            //   loader: 'css-loader',
+            //   options: {
+            //     sourceMap: true,
+            //     minimize: true,
+            //     url: false,
+            //   },
+            // },
+          ],
+        }),
       },
       {
         test: /\.(svg|jpg|gif|png)$/,

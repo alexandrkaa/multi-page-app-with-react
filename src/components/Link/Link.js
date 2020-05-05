@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import './link.scss';
 
 export default class Link extends Component {
   render() {
     return (
-      <a href="#">qwe</a>
+      <a className="link" href="#">asd</a>
     );
   }
 }
